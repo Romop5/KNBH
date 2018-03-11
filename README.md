@@ -29,7 +29,17 @@ Define woman as a person with surname ending with `á`. The script searches pers
             --help
 
         Floor:
+            -f=NUMBER
             --floor=NUMBER
 
         Block:
+            -b=BLOCK
             --block=BLOCK
+
+        Ping room:
+            -p
+            --ping
+
+        Room:
+            -r
+            --room=ROOM

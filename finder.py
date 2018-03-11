@@ -33,6 +33,9 @@ def get(block, room):
         print("ERROR: site status code: ", r.status_code)
         return None
 
+    if "Data nenalezena" in r.text:
+        return None
+
     parsed_html = BeautifulSoup(r.text, 'html.parser')
 
     counter = 0
