@@ -1,63 +1,41 @@
 #!/usr/bin/env python3.6
 
+
 import finder
 import sys
 import re
 import signal
-
-###############################################################################
-
-
-class Colors():
-
-    reset        = "\033[0m"
-
-    bold_red     = "\033[1m\033[31m"
-    bold_green   = "\033[1m\033[32m"
-    bold_yellow  = "\033[1m\033[33m"
-    bold_blue    = "\033[1m\033[34m"
-    bold_magenta = "\033[1m\033[35m"
-    bold_cyan    = "\033[1m\033[36m"
-
-    regular_red     = "\033[31m"
-    regular_green   = "\033[32m"
-    regular_yellow  = "\033[33m"
-    regular_blue    = "\033[34m"
-    regular_magenta = "\033[35m"
-    regular_cyan    = "\033[36m"
-    regular_black   = "\033[30m"
-    regular_white   = "\033[0m\033[37m"
+import const
 
 
-class Rooms():
+class Dormitory():
 
-    fr=None
-    to=None
-    fl=None
-    bl=None
+    def __init__(self, argv):
+        self.__block = None
+        self.__floor = None
 
-    def __str__(self):
-        return 'FROM:\t'+str(self.fr)+'\nTO:\t'+str(self.to)+'\nFLOOR:\t'+str(self.fl)+'\nBLOCK:\t'+self.bl
+        for arg in argv[1:]:
+            if re.match('^--block=.+$', arg):
+                self.__block = check_block(arg[8:])
+            elif re.match('^--floor=.+$', arg):
+                self.__floor = check_floor(arg[8:])
+            else:
+                error('Wrong arguments!\n', 1)
 
-###############################################################################
+    def block(self):
+        return self.__block
+
+    def floor(self):
+        return self.__floor
+
+    def rooms(self):
+        a = self.__floor * 100
+        b = (a + 100) - 1
+        return range(a, b+1)
 
 
 def print_help():
-
-    message= '\nScript\'s parameters:\n\n' + \
-             '\t[ [-rf][-rt]|[fl] ][-bl] \n\n' + \
-             '\tRooms from number A:\n' + \
-             '\t[-rf=A]\n\n' + \
-             '\tRooms to number B:\n' + \
-             '\t[-rt=B]\n\n' + \
-             '\tRooms from floor N:\n' + \
-             '\t[-fl=N]\n\n' + \
-             '\tRooms from block X:\n' + \
-             '\t[-bl=X]\n\n' + \
-             '\tHelp:\n' + \
-             '\t[-h]\n\n'
-
-    sys.stdout.write(message)
+    sys.stdout.write(const.HELP)
 
 
 def signal_handler(signal, frame):
@@ -67,74 +45,80 @@ def signal_handler(signal, frame):
 
 def error(message, exitcode):
     sys.stderr.write(message)
-    print_help()
     sys.exit(exitcode)
 
 
-def check_room_number(string):
+def check_block(string):
+    if re.match('^(B0[2457]|A0[2-5]|C0[1-3])$', string, re.IGNORECASE):
+        return string.lower()
+    else:
+        error(string+'\nWrong block!\n', 3)
+
+
+def check_floor(string):
     try:
         number = int(string)
     except ValueError:
-        error("Wrong room number!\n", 2)
+        error(string+'\nWrong floor number!\n', 2)
     if number >= 0:
         return int(string)
     else:
-        error("Wrong room number!\n", 2)
+        error(string+'\nWrong floor number!\n', 2)
 
 
-def check_block(string):
-    if re.match("^(B0[2457]|A0[2-5]|C0[1-3])$", string, re.IGNORECASE):
-        return string.lower()
+def print_header(color, block, floor):
+    colres = const.COLOR_RESET
+    string = ''
+
+    string += '======='
+    string += '%s%s%s -' % (color, block, colres)
+    string += ' %s%s floor%s' % (color, str(floor), colres)
+    string += '======='
+
+    print(string)
+
+
+def print_footer():
+    print("===========================")
+
+
+def print_person(number, person):
+    string = ''
+
+    string += ' %s%s%s ' % (const.COLOR_REGULAR_GREEN, str(number), const.COLOR_RESET)
+
+    if person.isWoman():
+        string += '%s%s%s' % (const.COLOR_BOLD_RED, person.getName(), const.COLOR_RESET)
     else:
-        error("Wrong block!\n", 3)
+        string += '%s' % (person.getName())
 
-
-def load_rooms(rooms, argv):
-    for arg in argv[1:]:
-        if re.match('^-rf=.*$', arg) and rooms.fr == rooms.fl is None:
-            rooms.fr = check_room_number(arg[4:])
-        elif re.match('^-rt=.*$', arg) and rooms.to == rooms.fl is None:
-            rooms.to = check_room_number(arg[4:])
-        elif re.match('^-fl=.*$', arg) and rooms.fl == rooms.fr == rooms.to is None:
-            rooms.fl = check_room_number(arg[4:])
-        elif re.match('^-bl=.*$', arg) and rooms.bl is None:
-            rooms.bl = check_block(arg[4:])
-        else:
-            error('Wrong arguments!\n', 1)
-
-    if not rooms.bl:
-        error('Wrong arguments!\n', 1)
-
-    if rooms.fl:
-        rooms.fr = rooms.fl * 100
-        rooms.to = (rooms.fr + 100) - 1
-    elif rooms.fr > rooms.to:
-        rooms.fr, rooms.to = rooms.to, rooms.fr
+    print(string)
 
 
 def init():
 
-    if len(sys.argv) == 2 and sys.argv[1] == '-h': print_help(); sys.exit(0)
+    if len(sys.argv) == 1:
+    	error('Wrong arguments!\n', 1)
 
-    C = Colors()
-    R = Rooms()
+    elif len(sys.argv) == 2 and (sys.argv[1] == '-h' or sys.argv[1] == '--help'):
+        print_help()
+        sys.exit(0)
 
-    load_rooms(R, sys.argv)
+    elif len(sys.argv) != 3:
+    	error('Wrong arguments!\n', 1)
 
-    print("=======", C.bold_green+R.bl.upper()+C.reset, "=======")
-    for room_number in range(R.fr, R.to+1):
-        names = finder.get(R.bl, room_number)
+    D = Dormitory(sys.argv)
+
+    print_header(const.COLOR_BOLD_GREEN, D.block().upper(), D.floor())
+
+    for number in D.rooms():
+        names = finder.get(D.block(), number)
         if names != None:
             for person in names:
-                print(" "+C.regular_green+str(room_number)+C.reset, end=" ")
-                if person.isWoman():
-                    print(C.bold_red, end="")
-                else:
-                    print(C.regular_white, end="")
-                print(person.getName(), C.reset)
-    print("===================")
+                print_person(number, person)
 
-    sys.exit(0)
+    print_footer()
+
 
 ###############################################################################
 

@@ -8,6 +8,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import const
 
 
 class Person():
@@ -19,14 +20,12 @@ class Person():
         return self.name + " " + self.surname
 
     def isWoman(self):
-        return self.gender is 'F'
+        return self.gender is const.FEMALE
 
 
 def get(block, room):
     "Post request to kn.vutbr.cz and retrieve names with correct parameters"
     names = list()
-
-    block = block.lower()
 
     r = requests.get('http://kn.vutbr.cz/search/index.html?str='+str(block)+'-'+str(room))
 
@@ -52,10 +51,10 @@ def get(block, room):
                         person.name = asd[40:-5]
                     elif "jmen" in asd:
                         person.surname = asd[43:-5]
-                        if person.surname.endswith(('ová','á')):
-                            person.gender = 'F'
+                        if person.surname.endswith(('á','Á')):
+                            person.gender = const.FEMALE
                         else:
-                            person.gender = 'M'
+                            person.gender = const.MALE
                         names.append(person)
                         person = Person()
 

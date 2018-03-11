@@ -4,7 +4,7 @@
 
 ## Description
 
-Define woman as a person with surname ending with "á" or "ová". The script searches throught the rooms defined by user via parameters. Women are displayed with bold red color.
+Define woman as a person with surname ending with `á`. The script searches persons on the specified floor and block defined by user via parameters. Women are displayed with red bold color.
 
 ## Usage
 
@@ -21,18 +21,15 @@ Define woman as a person with surname ending with "á" or "ová". The script sea
     ```sh
     python3.6 main.py [OPTIONS]
     ```
+
     OPTIONS:
 
-        [
-          [
-            [-rf=A] Rooms from number A
-            [-rf=B] Rooms to   number B
-          ]
-          or
-          [
-            [-fl=N] Rooms from floor N
-          ]
-        ]
-        [-bl=X] Rooms from block X
-        [-h]    Help
+        Help:
+            -h
+            --help
 
+        Floor:
+            --floor=NUMBER
+
+        Block:
+            --block=BLOCK
