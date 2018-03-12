@@ -43,3 +43,7 @@ Define woman as a person with surname ending with `á`. The script searches pers
         Room:
             -r
             --room=ROOM
+
+        Girls only:
+            -g
+            --girls
