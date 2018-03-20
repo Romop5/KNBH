@@ -40,6 +40,7 @@ class Dormitory():
 
 
     def block(self):
+        "returns block variable"
         return self.__block
 
 
