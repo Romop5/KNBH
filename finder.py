@@ -1,33 +1,22 @@
-#!/usr/bin/env python3.6
-
 """
     Author: Marek Tamaskovic
     email: tamaskovic.marek -[at]- gmail.com
 """
 
-import requests
-from bs4 import BeautifulSoup
 import re
 import const
+import requests
 
 
-class Person():
-    name = ""
-    surname = ""
-    gender = None
-
-    def getName(self):
-        return self.name + " " + self.surname
-
-    def isWoman(self):
-        return self.gender is const.FEMALE
+from person import *
 
 
 def get(block, room):
     "Post request to kn.vutbr.cz and retrieve names with correct parameters"
     names = list()
 
-    r = requests.get('http://kn.vutbr.cz/search/index.html?str='+str(block)+'-'+str(room))
+    r = requests.get(
+        'http://kn.vutbr.cz/search/index.html?str='+str(block)+'-'+str(room))
 
     if r.status_code is not 200:
         print("ERROR: site status code: ", r.status_code)
@@ -36,29 +25,17 @@ def get(block, room):
     if "Data nenalezena" in r.text:
         return None
 
-    parsed_html = BeautifulSoup(r.text, 'html.parser')
+    regex = re.compile("<\/font>\s(.*)\s(.*)<\/th>")
+    matches = re.finditer(regex, r.text)
 
-    counter = 0
+    for match in matches:
+        p_name = str(match.group(1))
+        p_surname = str(match.group(2))
 
-    p = re.compile("<td.*>.*>((Jméno)|(Blok)|(Příjmení)):(.*>){3}.*<\/td>")
+        if p_surname.endswith(('á', 'Á')):
+            p_gender = const.FEMALE
+        else:
+            p_gender = const.MALE
 
-    for i in parsed_html.td:
-        counter += 1
-        if counter == 6:
-            for line in i:
-                string = str(line)
-                person = Person()
-                for m in p.finditer(string):
-                    asd = str(m.group())
-                    if "Jméno" in asd:
-                        person.name = asd[40:-5]
-                    elif "jmen" in asd:
-                        person.surname = asd[43:-5]
-                        if person.surname.endswith(('á','Á')):
-                            person.gender = const.FEMALE
-                        else:
-                            person.gender = const.MALE
-                        names.append(person)
-                        person = Person()
-
+        names.append(Person(p_name, p_surname, p_gender))
     return names
