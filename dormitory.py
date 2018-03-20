@@ -1,9 +1,12 @@
+#! /usr/bin/env python3
+"Dormitory module"
+
 import re
+
 import system
 
-    
 class Dormitory():
-
+    "Dormitory module"
 
     def __init__(self, argv):
         self.__block = None
