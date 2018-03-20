@@ -13,10 +13,12 @@ from dormitory import *
 
 
 def print_help():
+    "Print help message"
     sys.stdout.write(const.HELP)
 
 
 def print_header(color, block, floor):
+    "Print header"
     colres = const.COLOR_RESET
     string = ''
 
@@ -29,14 +31,17 @@ def print_header(color, block, floor):
 
 
 def print_footer():
+    "Print footer"
     print(" ---------------------------------")
 
 
 def print_footer_ping():
+    "Print footer with ping block"
     print(" --------------------------------- -------------")
 
 
 def get_person(number, person):
+    "Get person string"
     string = ''
 
     string += '| %s%s%s | ' % (const.COLOR_REGULAR_GREEN,
@@ -57,12 +62,13 @@ def get_person(number, person):
 
 
 def ping(host):
+    "Ping specific host"
     response = os.system("ping -c 1 -w1 " + host + " > /dev/null 2>&1")
     return response == 0
 
 
 def init():
-
+    "init function"
     if len(sys.argv) == 1:
         system.error('Wrong arguments!\n', 1)
 
@@ -81,7 +87,7 @@ def init():
     no_rooms = True
     for number in dorm.rooms():
         names = finder.get(dorm.block(), number)
-        if names == None:
+        if names is None:
             # the could be no room numbers in middle of the floor
             # skip them
             if int(str(number)[-2:]) < 20:
@@ -102,8 +108,6 @@ def init():
 
         no_rooms = False
         if dorm.ping():
-            status = "offline"
-
             online = 0
             room = str(number)
             if len(room) == 3 and (dorm.block().startswith("a") or dorm.block().startswith("d")):

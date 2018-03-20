@@ -1,11 +1,10 @@
+"Dormitory module"
+
 import re
 
-
 import system
-
     
 class Dormitory():
-
 
     def __init__(self, argv):
         self.__block = None
