@@ -9,6 +9,7 @@ class Person():
         self.__surname = surname
         self.__gender  = gender
 
+
     def name(self):
         return self.__name
 
