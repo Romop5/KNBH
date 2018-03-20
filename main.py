@@ -1,12 +1,12 @@
 #!/usr/bin/env python3.6
 
 
-import finder
 import sys
+import os
 import re
 import signal
 import const
-import os
+import finder
 
 
 class Dormitory():
