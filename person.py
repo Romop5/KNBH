@@ -9,15 +9,6 @@ class Person():
         self.__surname = surname
         self.__gender  = gender
 
-
-    def set_ping(self, ping):
-        self.__ping = ping
-
-
-    def ping(self):
-        return self.__ping
-
-
     def name(self):
         return self.__name
 
@@ -26,7 +17,7 @@ class Person():
         return self.__surname
 
 
-    def name_full(self):
+    def full_name(self):
         return self.__name + " " + self.__surname
 
 

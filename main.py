@@ -125,10 +125,10 @@ def get_person(number, person):
     rem = 30 + 13
     if person.female():
         string += '%s%s%s' % (const.COLOR_BOLD_RED,
-                              person.name_full(), const.COLOR_RESET)
+                              person.full_name(), const.COLOR_RESET)
         rem += 13
     else:
-        string += '%s' % (person.name_full())
+        string += '%s' % (person.full_name())
 
     rem = rem - len(string)
     string += rem * " "
