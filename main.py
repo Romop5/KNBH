@@ -126,6 +126,10 @@ def init():
             print_footer()
 
         for person in names:
+            if dorm.boysOnly() and person.endswith('á'):
+                continue
+            if dorm.girlsOnly() and not person.endswith('á'):
+                continue
             if dorm.ping():
                 print(get_person(number, person), end="")
                 maybe = "?" if not all_online and not all_offline else ""

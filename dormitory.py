@@ -34,6 +34,12 @@ class Dormitory():
 
             elif re.match('^--ping$', arg) or re.match('^-p$', arg):
                 self.__ping = True
+            
+            elif re.match('^--girls$', arg) or re.match('^-G$', arg):
+                self.__girlsOnly = True            
+
+            elif re.match('^--boys$', arg) or re.match('^-B$', arg):
+                self.__boysOnly = True            
 
             else:
                 system.error('Wrong arguments!\n', 1)
@@ -51,6 +57,11 @@ class Dormitory():
     def ping(self):
         return self.__ping
 
+    def girlsOnly(self):
+        return self.__girlsOnly
+
+    def boysOnly(self):
+        return self.__boysOnly
 
     def rooms(self):
         if self.__room != None:
